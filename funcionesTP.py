@@ -93,3 +93,39 @@ def ejecutarEuler_heunn(G,pasos,delta_t):
 
     return graficar(p1,p2,p3,titulo_ventana)
 #Fin__1-A-EULER----------------------------------------------------------------------------------------------------
+
+def ejecutarRK4(G,pasos,delta_t):
+    titulo_ventana='RK4'
+    p1,p2,p3,v1,v2,v3=init(pasos)
+
+    for i in range(pasos-1):
+        a1=calcularAceleracion(m2,m3,p1[i],p2[i],p3[i],G)
+        a2=calcularAceleracion(m1,m3,p2[i],p1[i],p3[i],G)
+        a3=calcularAceleracion(m1,m2,p3[i],p1[i],p2[i],G)
+        if(i>0):
+            v1[i]=v1[i-1]+a1*delta_t
+            v2[i]=v2[i-1]+a2*delta_t
+            v3[i]=v3[i-1]+a3*delta_t
+
+        k1_1=v1[i]
+        k1_2=v2[i]
+        k1_3=v3[i]
+
+        k2_1=v1[i]+a1*delta_t*k1_1/2
+        k2_2=v2[i]+a2*delta_t*k1_2/2
+        k2_3=v3[i]+a3*delta_t*k1_3/2
+
+        k3_1=v1[i]+a1*delta_t*k2_1/2
+        k3_2=v2[i]+a2*delta_t*k2_2/2
+        k3_3=v3[i]+a3*delta_t*k2_3/2
+
+        k4_1=v1[i]+a1*delta_t*k3_1
+        k4_2=v2[i]+a2*delta_t*k3_2
+        k4_3=v3[i]+a3*delta_t*k3_3
+
+        p1[i+1]=p1[i]+(delta_t/6)*(k1_1+2*k2_1+2*k3_1+k4_1)
+        p2[i+1]=p2[i]+(delta_t/6)*(k1_2+2*k2_2+2*k3_2+k4_2)
+        p3[i+1]=p3[i]+(delta_t/6)*(k1_3+2*k2_3+2*k3_3+k4_3)
+
+    return graficar(p1,p2,p3,titulo_ventana)
+    
