@@ -3,24 +3,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 #masas
-m1=2
-m2=1
-m3=1
-
+# m1=2
+# m2=1
+# m3=1
+m3 = 1.989e30  #masa del sol
+m1 = 5.972e24  #masa de la tierra
+m2 = 6.39e23 #masa de marte
 def init(pasos):
+    #G = 6.67430e-11  
+    # m_sol = 1.989e30  
+    # m_tierra = 5.972e24  
+    # m_planetaX = 6.39e23
+
     et=np.zeros(pasos)
 
     p1=np.zeros((pasos,3))
     p2=np.zeros((pasos,3))
     p3=np.zeros((pasos,3))
 
-    p1[0],p2[0],p3[0]=np.array([1.0,1.0,1.0]),np.array([-1,-1,1]),np.array([-1,1,-1])
+    p1[0],p2[0],p3[0]=np.array([1.496e11,0.0,0.0]),np.array([2.279e11,0.0,0.0]),np.array([0.0,0.0,0.0])
 
     v1=np.zeros((pasos,3))
     v2=np.zeros((pasos,3))
     v3=np.zeros((pasos,3))
 
-    v1[0],v2[0],v3[0]=np.array([0.5,-0.5,0.0]),np.array([-0.5,0.0,0.5]),np.array([0.0,0.5,-0.5])
+    v1[0],v2[0],v3[0]=np.array([0.0,29780.0,0.0]),np.array([0.0,24077.0,0.0]),np.array([0.0,0.0,0.0])
     return p1,p2,p3,v1,v2,v3,et
 
 def calcularAceleracion(m2,m3,r1,r2,r3,G):
@@ -122,42 +129,96 @@ def ejecutarEuler_heunn(G,pasos,delta_t):
     return graficar(p1,p2,p3,et,titulo_ventana)
 #Fin__1-A-EULER----------------------------------------------------------------------------------------------------
 
-def ejecutarRK4(G,pasos,delta_t):
-    titulo_ventana='RK4'
-    p1,p2,p3,v1,v2,v3,et=init(pasos)
+# def ejecutarRK4(G,pasos,delta_t):
+#     titulo_ventana='RK4'
+#     p1,p2,p3,v1,v2,v3,et=init(pasos)
     
-    for i in range(pasos-1):
-        et[i]=calcularEnergia_i(p1[i],p2[i],p3[i],v1[i],v2[i],v3[i],G)
+#     for i in range(pasos-1):
+#         et[i]=calcularEnergia_i(p1[i],p2[i],p3[i],v1[i],v2[i],v3[i],G)
 
-        a1=calcularAceleracion(m2,m3,p1[i],p2[i],p3[i],G)
-        a2=calcularAceleracion(m1,m3,p2[i],p1[i],p3[i],G)
-        a3=calcularAceleracion(m1,m2,p3[i],p1[i],p2[i],G)
-        if(i>0):
-            v1[i]=v1[i-1]+a1*delta_t
-            v2[i]=v2[i-1]+a2*delta_t
-            v3[i]=v3[i-1]+a3*delta_t
+#         a1=calcularAceleracion(m2,m3,p1[i],p2[i],p3[i],G)
+#         a2=calcularAceleracion(m1,m3,p2[i],p1[i],p3[i],G)
+#         a3=calcularAceleracion(m1,m2,p3[i],p1[i],p2[i],G)
+#         if(i>0):
+#             v1[i]=v1[i-1]+a1*delta_t
+#             v2[i]=v2[i-1]+a2*delta_t
+#             v3[i]=v3[i-1]+a3*delta_t
 
-        k1_1=v1[i]
-        k1_2=v2[i]
-        k1_3=v3[i]
+#         k1_1=v1[i]
+#         k1_2=v2[i]
+#         k1_3=v3[i]
 
-        k2_1=v1[i]+a1*delta_t*k1_1/2
-        k2_2=v2[i]+a2*delta_t*k1_2/2
-        k2_3=v3[i]+a3*delta_t*k1_3/2
+#         k2_1=v1[i]+a1*delta_t*k1_1/2
+#         k2_2=v2[i]+a2*delta_t*k1_2/2
+#         k2_3=v3[i]+a3*delta_t*k1_3/2
 
-        k3_1=v1[i]+a1*delta_t*k2_1/2
-        k3_2=v2[i]+a2*delta_t*k2_2/2
-        k3_3=v3[i]+a3*delta_t*k2_3/2
+#         k3_1=v1[i]+a1*delta_t*k2_1/2
+#         k3_2=v2[i]+a2*delta_t*k2_2/2
+#         k3_3=v3[i]+a3*delta_t*k2_3/2
 
-        k4_1=v1[i]+a1*delta_t*k3_1
-        k4_2=v2[i]+a2*delta_t*k3_2
-        k4_3=v3[i]+a3*delta_t*k3_3
+#         k4_1=v1[i]+a1*delta_t*k3_1
+#         k4_2=v2[i]+a2*delta_t*k3_2
+#         k4_3=v3[i]+a3*delta_t*k3_3
 
-        p1[i+1]=p1[i]+(delta_t/6)*(k1_1+2*k2_1+2*k3_1+k4_1)
-        p2[i+1]=p2[i]+(delta_t/6)*(k1_2+2*k2_2+2*k3_2+k4_2)
-        p3[i+1]=p3[i]+(delta_t/6)*(k1_3+2*k2_3+2*k3_3+k4_3)
+#         p1[i+1]=p1[i]+(delta_t/6)*(k1_1+2*k2_1+2*k3_1+k4_1)
+#         p2[i+1]=p2[i]+(delta_t/6)*(k1_2+2*k2_2+2*k3_2+k4_2)
+#         p3[i+1]=p3[i]+(delta_t/6)*(k1_3+2*k2_3+2*k3_3+k4_3)
 
-    return graficar(p1,p2,p3,et,titulo_ventana)
+#     return graficar(p1,p2,p3,et,titulo_ventana)
+
+def ejecutarRK4(G, pasos, delta_t):
+    titulo_ventana = 'RK4'
+    p1, p2, p3, v1, v2, v3, et = init(pasos)
+    
+    for i in range(pasos - 1):
+        et[i] = calcularEnergia_i(p1[i], p2[i], p3[i], v1[i], v2[i], v3[i], G)
+
+        # Calcular aceleraciones iniciales
+        a1 = calcularAceleracion(m2, m3, p1[i], p2[i], p3[i], G)
+        a2 = calcularAceleracion(m1, m3, p2[i], p1[i], p3[i], G)
+        a3 = calcularAceleracion(m1, m2, p3[i], p1[i], p2[i], G)
+
+        # k1
+        k1_v1 = a1
+        k1_v2 = a2
+        k1_v3 = a3
+        k1_p1 = v1[i]
+        k1_p2 = v2[i]
+        k1_p3 = v3[i]
+
+        # k2
+        k2_v1 = calcularAceleracion(m2, m3, p1[i] + k1_p1 * delta_t / 2, p2[i] + k1_p2 * delta_t / 2, p3[i] + k1_p3 * delta_t / 2, G)
+        k2_v2 = calcularAceleracion(m1, m3, p2[i] + k1_p2 * delta_t / 2, p1[i] + k1_p1 * delta_t / 2, p3[i] + k1_p3 * delta_t / 2, G)
+        k2_v3 = calcularAceleracion(m1, m2, p3[i] + k1_p3 * delta_t / 2, p1[i] + k1_p1 * delta_t / 2, p2[i] + k1_p2 * delta_t / 2, G)
+        k2_p1 = v1[i] + k1_v1 * delta_t / 2
+        k2_p2 = v2[i] + k1_v2 * delta_t / 2
+        k2_p3 = v3[i] + k1_v3 * delta_t / 2
+
+        # k3
+        k3_v1 = calcularAceleracion(m2, m3, p1[i] + k2_p1 * delta_t / 2, p2[i] + k2_p2 * delta_t / 2, p3[i] + k2_p3 * delta_t / 2, G)
+        k3_v2 = calcularAceleracion(m1, m3, p2[i] + k2_p2 * delta_t / 2, p1[i] + k2_p1 * delta_t / 2, p3[i] + k2_p3 * delta_t / 2, G)
+        k3_v3 = calcularAceleracion(m1, m2, p3[i] + k2_p3 * delta_t / 2, p1[i] + k2_p1 * delta_t / 2, p2[i] + k2_p2 * delta_t / 2, G)
+        k3_p1 = v1[i] + k2_v1 * delta_t / 2
+        k3_p2 = v2[i] + k2_v2 * delta_t / 2
+        k3_p3 = v3[i] + k2_v3 * delta_t / 2
+
+        # k4
+        k4_v1 = calcularAceleracion(m2, m3, p1[i] + k3_p1 * delta_t, p2[i] + k3_p2 * delta_t, p3[i] + k3_p3 * delta_t, G)
+        k4_v2 = calcularAceleracion(m1, m3, p2[i] + k3_p2 * delta_t, p1[i] + k3_p1 * delta_t, p3[i] + k3_p3 * delta_t, G)
+        k4_v3 = calcularAceleracion(m1, m2, p3[i] + k3_p3 * delta_t, p1[i] + k3_p1 * delta_t, p2[i] + k3_p2 * delta_t, G)
+        k4_p1 = v1[i] + k3_v1 * delta_t
+        k4_p2 = v2[i] + k3_v2 * delta_t
+        k4_p3 = v3[i] + k3_v3 * delta_t
+
+        # Actualizar posiciones y velocidades
+        p1[i + 1] = p1[i] + (delta_t / 6) * (k1_p1 + 2 * k2_p1 + 2 * k3_p1 + k4_p1)
+        p2[i + 1] = p2[i] + (delta_t / 6) * (k1_p2 + 2 * k2_p2 + 2 * k3_p2 + k4_p2)
+        p3[i + 1] = p3[i] + (delta_t / 6) * (k1_p3 + 2 * k2_p3 + 2 * k3_p3 + k4_p3)
+        v1[i + 1] = v1[i] + (delta_t / 6) * (k1_v1 + 2 * k2_v1 + 2 * k3_v1 + k4_v1)
+        v2[i + 1] = v2[i] + (delta_t / 6) * (k1_v2 + 2 * k2_v2 + 2 * k3_v2 + k4_v2)
+        v3[i + 1] = v3[i] + (delta_t / 6) * (k1_v3 + 2 * k2_v3 + 2 * k3_v3 + k4_v3)
+
+    return graficar(p1, p2, p3, et, titulo_ventana)
     
 def calcularECinetica(m_i,v_i):
     return (m_i/2)*np.linalg.norm(v_i)**2
