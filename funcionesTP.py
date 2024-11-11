@@ -218,6 +218,9 @@ def ejecutarRK4(G, pasos, delta_t):
         v2[i + 1] = v2[i] + (delta_t / 6) * (k1_v2 + 2 * k2_v2 + 2 * k3_v2 + k4_v2)
         v3[i + 1] = v3[i] + (delta_t / 6) * (k1_v3 + 2 * k2_v3 + 2 * k3_v3 + k4_v3)
 
+    print('energia segun trapecio', ejecutar_trapecio(et, delta_t))
+    print('energia segun simpson', ejecutar_simpson(et, delta_t))
+
     return graficar(p1, p2, p3, et, titulo_ventana)
     
 def calcularECinetica(m_i,v_i):
@@ -238,4 +241,27 @@ def calcularEnergia_i(p1_i,p2_i,p3_i,v1_i,v2_i,v3_i,G):
     ec=calcularECinetica(m1,v1_i)+calcularECinetica(m2,v2_i)+calcularECinetica(m3,v3_i)
     et=calcularEnergiaTotal(ep,ec)
     return et
-    
+
+def ejecutar_trapecio(et, delta_t):
+    acumulado = 0
+
+    for i in range(1, len(et)):
+        acumulado += abs((et[i] + et[i-1]) * delta_t / 2)
+
+    return acumulado
+
+def ejecutar_simpson(et, delta_t):
+    acumulado = 0
+  
+    for i in range(1, len(et) - 1):
+        acumulado += abs((et[i-1] + 4 * et[i] + et[i+1]) * delta_t / 6)
+
+    return acumulado
+
+def ejecutar_cuadratura_gauss(et, delta_t):
+    acumulado = 0
+
+    for i in range(1, len(et) - 1):
+        acumulado += abs((et[i-1] + 4 * et[i] + et[i+1]) * delta_t / 6)
+
+    return acumulado
