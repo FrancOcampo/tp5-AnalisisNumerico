@@ -74,7 +74,6 @@ def graficar(p1,p2,p3,energia_total, titulo_ventana='Gráfico 3D'):
     ax2.set_xlabel('Tiempo')
     ax2.set_ylabel('Energía')
     ax2.legend()
-
     # Establecer el título de la ventana
     figura.canvas.manager.set_window_title(titulo_ventana)
 
@@ -106,7 +105,9 @@ def ejecutarEuler(G,pasos,delta_t):
         v2[i+1]=calcularEuler(v2[i],calcularAceleracion(m1,m3,p2[i],p1[i],p3[i],G),delta_t)
         v3[i+1]=calcularEuler(v3[i],calcularAceleracion(m1,m2,p3[i],p1[i],p2[i],G),delta_t)
 
-    return graficar(p1,p2,p3,et,titulo_ventana)
+    et_filtrado = [e for e in et if e != 0]
+    
+    return graficar(p1,p2,p3,et_filtrado,titulo_ventana)
 
 def ejecutarEuler_heunn(G,pasos,delta_t):
     titulo_ventana='Euler-Heunn'
@@ -126,7 +127,9 @@ def ejecutarEuler_heunn(G,pasos,delta_t):
         p2[i+1]=calcularEuler_Heunn(p2[i],v2[i],v2[i+1],delta_t)
         p3[i+1]=calcularEuler_Heunn(p3[i],v3[i],v3[i+1],delta_t)
 
-    return graficar(p1,p2,p3,et,titulo_ventana)
+    et_filtrado = [e for e in et if e != 0]
+
+    return graficar(p1,p2,p3,et_filtrado,titulo_ventana)
 #Fin__1-A-EULER----------------------------------------------------------------------------------------------------
 
 # def ejecutarRK4(G,pasos,delta_t):
@@ -220,8 +223,10 @@ def ejecutarRK4(G, pasos, delta_t):
 
     print('energia segun trapecio', ejecutar_trapecio(et, delta_t))
     print('energia segun simpson', ejecutar_simpson(et, delta_t))
+    print('energia segun gauss', ejecutar_cuadratura_gauss(et, delta_t))
 
-    return graficar(p1, p2, p3, et, titulo_ventana)
+    et_filtrado = [e for e in et if e != 0]
+    return graficar(p1, p2, p3, et_filtrado, titulo_ventana)
     
 def calcularECinetica(m_i,v_i):
     return (m_i/2)*np.linalg.norm(v_i)**2
@@ -229,9 +234,11 @@ def calcularECinetica(m_i,v_i):
 def calcularEPotencial(m1,m2,m3,p1,p2,p3,G):
     r1_2=p2-p1
     r1_3=p3-p1
+    r2_3 = p3 - p2
     distancia1=np.linalg.norm(r1_2)
     distancia2=np.linalg.norm(r1_3)
-    return -G*m1*m2/distancia1-G*m1*m3/distancia2 #suma de las energias potenciales de los cuerpos
+    distancia3 = np.linalg.norm(r2_3)
+    return -G * m1 * m2 / distancia1 - G * m1 * m3 / distancia2 - G * m2 * m3 / distancia3 #suma de las energias potenciales de los cuerpos
 
 def calcularEnergiaTotal(ep,ec):
     return ep+ec
@@ -240,7 +247,7 @@ def calcularEnergia_i(p1_i,p2_i,p3_i,v1_i,v2_i,v3_i,G):
     ep=calcularEPotencial(m1,m2,m3,p1_i,p2_i,p3_i,G)
     ec=calcularECinetica(m1,v1_i)+calcularECinetica(m2,v2_i)+calcularECinetica(m3,v3_i)
     et=calcularEnergiaTotal(ep,ec)
-    return et
+    return np.abs(et)
 
 def ejecutar_trapecio(et, delta_t):
     acumulado = 0
