@@ -104,10 +104,12 @@ def ejecutarEuler(G,pasos,delta_t):
         v1[i+1]=calcularEuler(v1[i],calcularAceleracion(m2,m3,p1[i],p2[i],p3[i],G),delta_t)
         v2[i+1]=calcularEuler(v2[i],calcularAceleracion(m1,m3,p2[i],p1[i],p3[i],G),delta_t)
         v3[i+1]=calcularEuler(v3[i],calcularAceleracion(m1,m2,p3[i],p1[i],p2[i],G),delta_t)
-
-    et_filtrado = [e for e in et if e != 0]
+    # Calcular la energía total para el último paso
+    et[pasos - 1] = calcularEnergia_i(p1[pasos - 1], p2[pasos - 1], p3[pasos - 1], v1[pasos - 1], v2[pasos - 1], v3[pasos - 1], G)
+    # print("et",et)
+    # et_filtrado = [e for e in et if e != 0]
     
-    return graficar(p1,p2,p3,et_filtrado,titulo_ventana)
+    return graficar(p1,p2,p3,et,titulo_ventana)
 
 def ejecutarEuler_heunn(G,pasos,delta_t):
     titulo_ventana='Euler-Heunn'
@@ -127,9 +129,9 @@ def ejecutarEuler_heunn(G,pasos,delta_t):
         p2[i+1]=calcularEuler_Heunn(p2[i],v2[i],v2[i+1],delta_t)
         p3[i+1]=calcularEuler_Heunn(p3[i],v3[i],v3[i+1],delta_t)
 
-    et_filtrado = [e for e in et if e != 0]
+    et[pasos - 1] = calcularEnergia_i(p1[pasos - 1], p2[pasos - 1], p3[pasos - 1], v1[pasos - 1], v2[pasos - 1], v3[pasos - 1], G)
 
-    return graficar(p1,p2,p3,et_filtrado,titulo_ventana)
+    return graficar(p1,p2,p3,et,titulo_ventana)
 #Fin__1-A-EULER----------------------------------------------------------------------------------------------------
 
 # def ejecutarRK4(G,pasos,delta_t):
@@ -225,8 +227,9 @@ def ejecutarRK4(G, pasos, delta_t):
     print('energia segun simpson', ejecutar_simpson(et, delta_t))
     print('energia segun gauss', ejecutar_cuadratura_gauss(et, delta_t))
 
-    et_filtrado = [e for e in et if e != 0]
-    return graficar(p1, p2, p3, et_filtrado, titulo_ventana)
+    et[pasos - 1] = calcularEnergia_i(p1[pasos - 1], p2[pasos - 1], p3[pasos - 1], v1[pasos - 1], v2[pasos - 1], v3[pasos - 1], G)
+
+    return graficar(p1, p2, p3, et, titulo_ventana)
     
 def calcularECinetica(m_i,v_i):
     return (m_i/2)*np.linalg.norm(v_i)**2
