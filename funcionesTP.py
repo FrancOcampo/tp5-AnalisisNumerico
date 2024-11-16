@@ -231,6 +231,56 @@ def ejecutarRK4(G, pasos, delta_t):
 
     return graficar(p1, p2, p3, et, titulo_ventana)
     
+def ejecutarRK5(G, pasos, delta_t):
+    titulo_ventana = 'RK4'
+    p1, p2, p3, v1, v2, v3, et = init(pasos)
+    
+    for i in range(pasos - 1):
+        a_01 = calcularAceleracion(m2, m3, p1[i], p2[i], p3[i], G)
+        a_02 = calcularAceleracion(m1, m3, p2[i], p1[i], p3[i], G)
+        a_03 = calcularAceleracion(m1, m2, p3[i], p1[i], p2[i], G)
+
+        k1_1= v1[i]
+        k1_2= v2[i]
+        k1_3= v3[i]
+
+        p2_1 = p1[i] + k1_1 * delta_t / 4
+        p2_2 = p2[i] + k1_2 * delta_t / 4
+        p2_3 = p3[i] + k1_3 * delta_t / 4
+
+        a_11 = calcularAceleracion(m2, m3, p2_1, p2_2, p2_3, G)
+        a_12 = calcularAceleracion(m1, m3, p2_2, p2_1, p2_3, G)
+        a_13 = calcularAceleracion(m1, m2, p2_3, p2_1, p2_2, G)
+
+        k2_1 = v1[i] + a_01 * delta_t / 4
+        v2_2 = v2[i] + a_02 * delta_t / 4
+        v2_3 = v3[i] + a_03 * delta_t / 4
+
+        k2_1 = v1[i] + k1_1 * delta_t / 4
+        k2_2 = v2[i] + k1_2 * delta_t / 4
+        k2_3 = v3[i] + k1_3 * delta_t / 4
+
+
+
+
+        p1_1= p1[i] + k1_1 * delta_t / 4
+        p1_2= p2[i] + k1_2 * delta_t / 4
+        p1_3= p3[i] + k1_3 * delta_t / 4
+
+
+
+
+
+
+    print('energia segun trapecio', ejecutar_trapecio(et, delta_t))
+    print('energia segun simpson', ejecutar_simpson(et, delta_t))
+    print('energia segun gauss', ejecutar_cuadratura_gauss(et, delta_t))
+
+    et[pasos - 1] = calcularEnergia_i(p1[pasos - 1], p2[pasos - 1], p3[pasos - 1], v1[pasos - 1], v2[pasos - 1], v3[pasos - 1], G)
+
+    return graficar(p1, p2, p3, et, titulo_ventana)
+
+
 def calcularECinetica(m_i,v_i):
     return (m_i/2)*np.linalg.norm(v_i)**2
 
