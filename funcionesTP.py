@@ -1,11 +1,28 @@
 from cmath import sqrt
+from math import pi
+from math import cos
+from math import sin
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 #masas
-# m1=2
-# m2=1
-# m3=1
+#----------------------------------------------------------------
+ca=pi/180
+
+#tierra
+vp=30.29e3 #velocidad perihelio
+pp=147.10e9 #posicion perihelio
+a=282.94*ca #angulo
+i=0.00*ca #inclinacion
+
+#cuerpo5 Marte
+vp2=26.614e3 #velocidad perihelio
+pp2=206.67e9 #posicion perihelio 
+a2=286.46*ca 
+i2=1.85*ca
+
+
+#----------------------------------------------------------------
 m3 = 1.989e30  #masa del sol
 m1 = 5.972e24  #masa de la tierra
 m2 = 6.39e23 #masa de marte
@@ -21,13 +38,23 @@ def init(pasos):
     p2=np.zeros((pasos,3))
     p3=np.zeros((pasos,3))
 
-    p1[0],p2[0],p3[0]=np.array([1.496e11,0.0,0.0]),np.array([2.279e11,0.0,0.0]),np.array([0.0,0.0,0.0])
+    #estable
+    # p1[0],p2[0],p3[0]=np.array([1.496e11,0.0,0.0]),np.array([2.279e11,0.0,0.0]),np.array([0.0,0.0,0.0])
+    #inestable 1
+    # p1[0],p2[0],p3[0]=np.array([2.2e11,0.0,0.0]),np.array([-2.2e11,0.0,0.0]),np.array([0.0,0.0,0.0])
+    #paper
+    p1[0],p2[0],p3[0]=np.array([pp*cos(a)*cos(i),pp*sin(a)*cos(i),pp*sin(i)]),np.array([pp2*cos(a2)*cos(i2),pp2*sin(a2)*cos(i2),pp2*sin(i2)]),np.array([0.0,0.0,0.0])
 
     v1=np.zeros((pasos,3))
     v2=np.zeros((pasos,3))
     v3=np.zeros((pasos,3))
 
-    v1[0],v2[0],v3[0]=np.array([0.0,29780.0,0.0]),np.array([0.0,24077.0,0.0]),np.array([0.0,0.0,0.0])
+    #estable
+    # v1[0],v2[0],v3[0]=np.array([0.0,29780.0,0.0]),np.array([0.0,24077.0,0.0]),np.array([0.0,0.0,0.0])
+    #inestable 1
+    # v1[0],v2[0],v3[0]=np.array([0.0,25000.0,0.0]),np.array([0.0,25000.0,0.0]),np.array([0.0,0.0,5000])
+    #paper
+    v1[0],v2[0],v3[0]=np.array([-vp*sin(a),vp*cos(a),0.0]),np.array([-vp2*sin(a2),vp2*cos(a2),0.0]),np.array([0.0,0.0,0.0])
     return p1,p2,p3,v1,v2,v3,et
 
 def calcularAceleracion(m2,m3,r1,r2,r3,G):
@@ -65,6 +92,9 @@ def graficar(p1,p2,p3,energia_total, titulo_ventana='Gráfico 3D'):
     ax1.scatter(p2[-1,0], p2[-1,1], p2[-1,2], color='blue', s=30, label='Fin Cuerpo 2')
     ax1.scatter(p3[-1,0], p3[-1,1], p3[-1,2], color='green', s=30, label='Fin Cuerpo 3')
     ax1.set_title('Trayectorias de los cuerpos')
+    ax1.set_xlabel('X')
+    ax1.set_ylabel('Y')
+    ax1.set_zlabel('Z')
     ax1.legend()
 
     # Subplot 2: Gráfico de la energía total
@@ -246,84 +276,84 @@ def ejecutarRK5(G, pasos, delta_t):
     
     for i in range(pasos - 1):
         et[i] = calcularEnergia_i(p1[i], p2[i], p3[i], v1[i], v2[i], v3[i], G)
-        #k1
-        k1_1=v1[i]
-        k1_2=v2[i]
-        k1_3=v3[i]
+        # k1
+        k1_1 = v1[i]
+        k1_2 = v2[i]
+        k1_3 = v3[i]
 
-        #p1+1
-        p1_2=p1[i]+(delta_t/4)*k1_1
-        p2_2=p2[i]+(delta_t/4)*k1_2
-        p3_2=p3[i]+(delta_t/4)*k1_3
+        # p1+1
+        p1_2 = p1[i] + (delta_t / 4) * k1_1
+        p2_2 = p2[i] + (delta_t / 4) * k1_2
+        p3_2 = p3[i] + (delta_t / 4) * k1_3
 
-        #k2
-        a2_1=calcularAceleracion(m2,m3,p1_2,p2_2,p3_2,G)
-        a2_2=calcularAceleracion(m1,m3,p2_2,p1_2,p3_2,G)
-        a2_3=calcularAceleracion(m1,m2,p3_2,p1_2,p2_2,G)
-        k2_1=v1[i]+(delta_t/4)*a2_1
-        k2_2=v2[i]+(delta_t/4)*a2_2
-        k2_3=v3[i]+(delta_t/4)*a2_3
+        # k2
+        a2_1 = calcularAceleracion(m2, m3, p1_2, p2_2, p3_2, G)
+        a2_2 = calcularAceleracion(m1, m3, p2_2, p1_2, p3_2, G)
+        a2_3 = calcularAceleracion(m1, m2, p3_2, p1_2, p2_2, G)
+        k2_1 = v1[i] + (delta_t / 4) * a2_1
+        k2_2 = v2[i] + (delta_t / 4) * a2_2
+        k2_3 = v3[i] + (delta_t / 4) * a2_3
 
-        #p2+1
-        p1_3=p1[i]+(delta_t/8)*(k1_1+k2_1)
-        p2_3=p2[i]+(delta_t/8)*(k1_2+k2_2)
-        p3_3=p3[i]+(delta_t/8)*(k1_3+k2_3)
+        # p2+1
+        p1_3 = p1[i] + (delta_t / 8) * (k1_1 + k2_1)
+        p2_3 = p2[i] + (delta_t / 8) * (k1_2 + k2_2)
+        p3_3 = p3[i] + (delta_t / 8) * (k1_3 + k2_3)
 
-        #k3
-        a3_1=calcularAceleracion(m2,m3,p1_3,p2_3,p3_3,G)
-        a3_2=calcularAceleracion(m1,m3,p2_3,p1_3,p3_3,G)
-        a3_3=calcularAceleracion(m1,m2,p3_3,p1_3,p2_3,G)
-        k3_1=v1[i]+(delta_t/4)*(a3_1)
-        k3_2=v2[i]+(delta_t/4)*(a3_2)
-        k3_3=v3[i]+(delta_t/4)*(a3_3)
+        # k3
+        a3_1 = calcularAceleracion(m2, m3, p1_3, p2_3, p3_3, G)
+        a3_2 = calcularAceleracion(m1, m3, p2_3, p1_3, p3_3, G)
+        a3_3 = calcularAceleracion(m1, m2, p3_3, p1_3, p2_3, G)
+        k3_1 = v1[i] + (delta_t / 4) * a3_1
+        k3_2 = v2[i] + (delta_t / 4) * a3_2
+        k3_3 = v3[i] + (delta_t / 4) * a3_3
 
-        #p3+1
-        p1_4=p1[i]+delta_t*(k3_1-(k2_1/2))
-        p2_4=p2[i]+delta_t*(k3_2-(k2_2/2))
-        p3_4=p3[i]+delta_t*(k3_3-(k2_3/2))
+        # p3+1
+        p1_4 = p1[i] + delta_t * (k3_1 - (k2_1 / 2))
+        p2_4 = p2[i] + delta_t * (k3_2 - (k2_2 / 2))
+        p3_4 = p3[i] + delta_t * (k3_3 - (k2_3 / 2))
 
-        #k4
-        a4_1=calcularAceleracion(m2,m3,p1_4,p2_4,p3_4,G)
-        a4_2=calcularAceleracion(m1,m3,p2_4,p1_4,p3_4,G)
-        a4_3=calcularAceleracion(m1,m2,p3_4,p1_4,p2_4,G)
-        k4_1=v1[i]+(delta_t/2)*(a4_1)
-        k4_2=v2[i]+(delta_t/2)*(a4_2)
-        k4_3=v3[i]+(delta_t/2)*(a4_3)
+        # k4
+        a4_1 = calcularAceleracion(m2, m3, p1_4, p2_4, p3_4, G)
+        a4_2 = calcularAceleracion(m1, m3, p2_4, p1_4, p3_4, G)
+        a4_3 = calcularAceleracion(m1, m2, p3_4, p1_4, p2_4, G)
+        k4_1 = v1[i] + (delta_t / 2) * a4_1
+        k4_2 = v2[i] + (delta_t / 2) * a4_2
+        k4_3 = v3[i] + (delta_t / 2) * a4_3
 
-        #p4+1
-        p1_5=p1[i]+(delta_t)*(k1_1*3/16+k4_1*9/16)
-        p2_5=p2[i]+(delta_t)*(k1_2*3/16+k4_2*9/16)
-        p3_5=p3[i]+(delta_t)*(k1_3*3/16+k4_3*9/16)
+        # p4+1
+        p1_5 = p1[i] + (delta_t) * (k1_1 * 3 / 16 + k4_1 * 9 / 16)
+        p2_5 = p2[i] + (delta_t) * (k1_2 * 3 / 16 + k4_2 * 9 / 16)
+        p3_5 = p3[i] + (delta_t) * (k1_3 * 3 / 16 + k4_3 * 9 / 16)
 
-        #k5
-        a5_1=calcularAceleracion(m2,m3,p1_5,p2_5,p3_5,G)
-        a5_2=calcularAceleracion(m1,m3,p2_5,p1_5,p3_5,G)
-        a5_3=calcularAceleracion(m1,m2,p3_5,p1_5,p2_5,G)
-        k5_1=v1[i]+(delta_t*3/4)*(a5_1)
-        k5_2=v2[i]+(delta_t*3/4)*(a5_2)
-        k5_3=v3[i]+(delta_t*3/4)*(a5_3)
+        # k5
+        a5_1 = calcularAceleracion(m2, m3, p1_5, p2_5, p3_5, G)
+        a5_2 = calcularAceleracion(m1, m3, p2_5, p1_5, p3_5, G)
+        a5_3 = calcularAceleracion(m1, m2, p3_5, p1_5, p2_5, G)
+        k5_1 = v1[i] + (delta_t * 3 / 4) * a5_1
+        k5_2 = v2[i] + (delta_t * 3 / 4) * a5_2
+        k5_3 = v3[i] + (delta_t * 3 / 4) * a5_3
 
-        #p5+1
-        p1_6=p1[i]+(delta_t/7)*(k1_1*(-3)+2*k2_1+12*k3_1-k4_1*12+k5_1*8)
-        p2_6=p2[i]+(delta_t/7)*(k1_2*(-3)+2*k2_2+12*k3_2-k4_2*12+k5_2*8)
-        p3_6=p3[i]+(delta_t/7)*(k1_3*(-3)+2*k2_3+12*k3_3-k4_3*12+k5_3*8)
+        # p5+1
+        p1_6 = p1[i] + (delta_t / 7) * (k1_1 * (-3) + 2 * k2_1 + 12 * k3_1 - k4_1 * 12 + k5_1 * 8)
+        p2_6 = p2[i] + (delta_t / 7) * (k1_2 * (-3) + 2 * k2_2 + 12 * k3_2 - k4_2 * 12 + k5_2 * 8)
+        p3_6 = p3[i] + (delta_t / 7) * (k1_3 * (-3) + 2 * k2_3 + 12 * k3_3 - k4_3 * 12 + k5_3 * 8)
 
-        #k6
-        a6_1=calcularAceleracion(m2,m3,p1_6,p2_6,p3_6,G)
-        a6_2=calcularAceleracion(m1,m3,p2_6,p1_6,p3_6,G)
-        a6_3=calcularAceleracion(m1,m2,p3_6,p1_6,p2_6,G)
-        k6_1=v1[i]+delta_t*(a6_1)
-        k6_2=v2[i]+delta_t*(a6_2)
-        k6_3=v3[i]+delta_t*(a6_3)
+        # k6
+        a6_1 = calcularAceleracion(m2, m3, p1_6, p2_6, p3_6, G)
+        a6_2 = calcularAceleracion(m1, m3, p2_6, p1_6, p3_6, G)
+        a6_3 = calcularAceleracion(m1, m2, p3_6, p1_6, p2_6, G)
+        k6_1 = v1[i] + delta_t * a6_1
+        k6_2 = v2[i] + delta_t * a6_2
+        k6_3 = v3[i] + delta_t * a6_3
 
-        #p+1
-        p1[i+1]=p1[i]+(delta_t/90)*(7*k1_1+32*k3_1+12*k4_1+32*k5_1+7*k6_1)
-        p2[i+1]=p2[i]+(delta_t/90)*(7*k1_2+32*k3_2+12*k4_2+32*k5_2+7*k6_2)
-        p3[i+1]=p3[i]+(delta_t/90)*(7*k1_3+32*k3_3+12*k4_3+32*k5_3+7*k6_3)
+        # p+1
+        p1[i + 1] = p1[i] + (delta_t / 90) * (7 * k1_1 + 32 * k3_1 + 12 * k4_1 + 32 * k5_1 + 7 * k6_1)
+        p2[i + 1] = p2[i] + (delta_t / 90) * (7 * k1_2 + 32 * k3_2 + 12 * k4_2 + 32 * k5_2 + 7 * k6_2)
+        p3[i + 1] = p3[i] + (delta_t / 90) * (7 * k1_3 + 32 * k3_3 + 12 * k4_3 + 32 * k5_3 + 7 * k6_3)
         
-        v1[i+1]=v1[i]+(delta_t/90)*(7*a2_1+32*a3_1+12*a4_1+32*a5_1+7*a6_1)
-        v2[i+1]=v2[i]+(delta_t/90)*(7*a2_2+32*a3_2+12*a4_2+32*a5_2+7*a6_2)
-        v3[i+1]=v3[i]+(delta_t/90)*(7*a2_3+32*a3_3+12*a4_3+32*a5_3+7*a6_3)
+        v1[i + 1] = v1[i] + (delta_t / 90) * (7 * a2_1 + 32 * a3_1 + 12 * a4_1 + 32 * a5_1 + 7 * a6_1)
+        v2[i + 1] = v2[i] + (delta_t / 90) * (7 * a2_2 + 32 * a3_2 + 12 * a4_2 + 32 * a5_2 + 7 * a6_2)
+        v3[i + 1] = v3[i] + (delta_t / 90) * (7 * a2_3 + 32 * a3_3 + 12 * a4_3 + 32 * a5_3 + 7 * a6_3)
 
     et[pasos - 1] = calcularEnergia_i(p1[pasos - 1], p2[pasos - 1], p3[pasos - 1], v1[pasos - 1], v2[pasos - 1], v3[pasos - 1], G)
 
