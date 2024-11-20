@@ -113,14 +113,12 @@ def graficar(p1,p2,p3,energia_total, titulo_ventana='Gráfico 3D'):
 def calcularEuler(c1, c2, Delta_t):
     y=c1+c2*Delta_t
     return y
+
 def calcularEuler_Heunn(x_1,v_1,v_2,Delta_t):
     x_2=x_1+(v_1+v_2)*Delta_t/2
     return x_2
 
 def ejecutarEuler(G,pasos,delta_t):
-    # G=2
-    # pasos=5000
-    # delta_t=0.001
     titulo_ventana='Euler'
 
     p1,p2,p3,v1,v2,v3,et=init(pasos)
@@ -141,8 +139,6 @@ def ejecutarEuler(G,pasos,delta_t):
     print('energia segun trapecio', ejecutar_trapecio(et, delta_t))
     print('energia segun simpson', ejecutar_simpson(et, delta_t))
     print('energia segun gauss', ejecutar_cuadratura_gauss(et, delta_t))
-    # print("et",et)
-    # et_filtrado = [e for e in et if e != 0]
     
     return graficar(p1,p2,p3,et,titulo_ventana)
 
@@ -404,9 +400,17 @@ def ejecutar_simpson(et, delta_t):
     return acumulado
 
 def ejecutar_cuadratura_gauss(et, delta_t):
+    # Puntos y pesos de Gauss-Legendre para n=2
+    puntos = [-1/np.sqrt(3), 1/np.sqrt(3)]
+    pesos = [1, 1]
+    
     acumulado = 0
 
-    for i in range(1, len(et) - 1):
-        acumulado += abs((et[i-1] + 4 * et[i] + et[i+1]) * delta_t / 6)
+    for i in range(len(et) - 1):
+        a = i * delta_t
+        b = (i + 1) * delta_t
+        for j in range(len(puntos)):
+            x = ((b - a) / 2) * puntos[j] + ((b + a) / 2)
+            acumulado += pesos[j] * np.interp(x, np.arange(len(et)) * delta_t, et) * (b - a) / 2
 
     return acumulado
